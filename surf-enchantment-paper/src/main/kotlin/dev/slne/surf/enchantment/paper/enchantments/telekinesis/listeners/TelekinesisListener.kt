@@ -1,9 +1,14 @@
 package dev.slne.surf.enchantment.paper.enchantments.telekinesis.listeners
 
+import com.github.shynixn.mccoroutine.folia.entityDispatcher
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.ticks
 import dev.slne.surf.enchantment.api.enchantments.telekinesis.PostTelekinesisItemEvent
 import dev.slne.surf.enchantment.api.enchantments.telekinesis.TelekinesisEnchantment
 import dev.slne.surf.enchantment.api.utils.hasCustomEnchantment
+import dev.slne.surf.enchantment.paper.plugin
 import dev.slne.surf.enchantment.paper.utils.VehicleDrops
+import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
@@ -13,12 +18,17 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockDropItemEvent
 import org.bukkit.event.entity.EntityDeathEvent
+import org.bukkit.event.entity.EntityDropItemEvent
 import org.bukkit.event.player.PlayerShearEntityEvent
 import org.bukkit.event.vehicle.VehicleDestroyEvent
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 object TelekinesisListener : Listener {
+
+    private val suppressedVehicles: MutableSet<UUID> = ConcurrentHashMap.newKeySet()
 
     @EventHandler(priority = EventPriority.LOW)
     fun onBlockBreak(event: BlockBreakEvent) {
@@ -67,13 +77,26 @@ object TelekinesisListener : Listener {
         val dropLocation = vehicle.location.clone()
         val drops = VehicleDrops.getDrops(vehicle)
 
-        event.isCancelled = true
         if (vehicle is InventoryHolder) {
             vehicle.inventory.clear()
         }
-        vehicle.remove()
+
+        val vehicleId = vehicle.uniqueId
+        suppressedVehicles.add(vehicleId)
 
         addDropsToInventory(player, drops, event, dropLocation)
+
+        plugin.launch(plugin.entityDispatcher(vehicle)) {
+            delay(1.ticks)
+            suppressedVehicles.remove(vehicleId)
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    fun onEntityDropItem(event: EntityDropItemEvent) {
+        if (event.entity.uniqueId in suppressedVehicles) {
+            event.isCancelled = true
+        }
     }
 
     @EventHandler
