@@ -47,7 +47,6 @@ object LumberJackListener : Listener {
         }
 
         val treeBlocks = TreeFinder.findTree(event.block)
-
         if (treeBlocks.size <= 1) return
 
         val blockResult = blockHandler.handleBlocks(player, treeBlocks.toList())

@@ -2,6 +2,7 @@
 
 package dev.slne.surf.enchantment.paper.enchantments.veinminer
 
+import com.google.auto.service.AutoService
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.rarity.Rarity
 import dev.slne.surf.enchantment.api.enchantment.AbstractCustomEnchantment
@@ -13,26 +14,19 @@ import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys
 import net.kyori.adventure.text.Component.text
 import org.bukkit.enchantments.Enchantment
 
-//@AutoService(VeinMinerEnchantment::class)
+@AutoService(VeinMinerEnchantment::class)
 class VeinMinerEnchantmentImpl : AbstractCustomEnchantment(
     key = key("surf", "vein_miner"),
-    displayName = text("Vain Miner"),
+    displayName = text("Vein Miner"),
     rarity = Rarity.EPIC,
     description = {
-        line { darkSpacer("Erzadern werden vollständig abgebaut") }
+        line { darkSpacer("Baut zusammenhändende Erzadern ab.") }
         line {
-            darkSpacer("Es werden maximal")
-            appendSpace()
-            variableValue("10 Blöcke")
-            appendSpace()
-            darkSpacer("pro Nutzung abgebaut.")
-        }
-        line {
-            darkSpacer("Die Abklinzeit beträgt")
+            darkSpacer("Die Abklingzeit beträgt")
             appendSpace()
             variableValue("2 Sekunden")
             appendSpace()
-            darkSpacer("pro abgebautem Block.")
+            darkSpacer("pro abgebautem Erz.")
         }
     },
     supportedItems = CustomItemTypeTags.VEIN_MINER_KEY.tagKey,
@@ -48,12 +42,13 @@ class VeinMinerEnchantmentImpl : AbstractCustomEnchantment(
     exclusiveWith = setOf(Enchantment.FORTUNE.key()),
     tags = setOf(
         EnchantmentTagKeys.ON_RANDOM_LOOT,
-        EnchantmentTagKeys.IN_ENCHANTING_TABLE,
+        EnchantmentTagKeys.TREASURE
     ),
     listeners = setOf(VeinMinerListener),
     jobs = setOf(VeinMinerListener.cooldownHandler)
 ), VeinMinerEnchantment {
     companion object {
         const val MAX_ORES_TO_MINE = 10
+        const val COOLDOWN_PER_ORE_MS = 2000
     }
 }

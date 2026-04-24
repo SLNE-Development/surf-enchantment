@@ -11,23 +11,21 @@ import dev.slne.surf.enchantment.paper.utils.CooldownHandler
 import dev.slne.surf.enchantment.paper.utils.events.FakeBlockBreakEvent
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.milliseconds
 
 object VeinMinerListener : Listener {
     private val blockHandler = BlockHandler()
     val cooldownHandler = CooldownHandler({
         appendSuccessPrefix()
-        success("Vein Miner ist wieder bereit für den nächsten Schlag!")
+        success("Deine Ausdauer ist zurückgekehrt – bereit für die nächste Ader!")
     }, { secondsLeft ->
         appendErrorPrefix()
-        error("Zu viele Erze auf einmal! Warte noch")
-        appendSpace()
-        variableValue("$secondsLeft Sekunden")
-        error(".")
+        error("Deine Arme sind noch schwer vom letzten Abbau!")
     })
 
     private val ORE_MATERIALS = setOf(
@@ -43,6 +41,8 @@ object VeinMinerListener : Listener {
         Material.ANCIENT_DEBRIS
     )
 
+    val Block.isOre: Boolean get() = ORE_MATERIALS.contains(this.type)
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBreak(event: BlockBreakEvent) {
         if (event is FakeBlockBreakEvent) return
@@ -52,26 +52,26 @@ object VeinMinerListener : Listener {
         if (!item.hasCustomEnchantment<VeinMinerEnchantment>()) return
 
         val block = event.block
-        if (block.type !in ORE_MATERIALS) return
+        if (!block.isOre) return
 
         if (player.gameMode != GameMode.CREATIVE) {
             if (!cooldownHandler.checkCooldown(player.uniqueId)) return
         }
 
-        val vein = VeinFinder.findVein(block)
-        if (vein.size <= 1) return
+        val veinBlocks = VeinFinder.findVein(block)
+        if (veinBlocks.size <= 1) return
 
-        val blockResult = blockHandler.handleBlocks(player, vein.toList())
-        val blocks = blockResult.breakableBlocks.take(VeinMinerEnchantmentImpl.MAX_ORES_TO_MINE)
+        val blockResult = blockHandler.handleBlocks(player, veinBlocks.toList())
+        val blocksToMine = blockResult.breakableBlocks.take(VeinMinerEnchantmentImpl.MAX_ORES_TO_MINE)
 
         BlockBreakHandler.handleBlockBreak(
-            cooldown = (blocks.size * 2.toLong()).seconds,
-            blocks = blocks,
+            cooldown = (blocksToMine.size * VeinMinerEnchantmentImpl.COOLDOWN_PER_ORE_MS).milliseconds,
+            blocks = blocksToMine,
             cooldownHandler = cooldownHandler,
             event = event,
             events = blockResult.events
         )
 
-        VeinMinerAnimation.playVeinEffect(blocks)
+        VeinMinerAnimation.playVeinEffect(blocksToMine)
     }
 }

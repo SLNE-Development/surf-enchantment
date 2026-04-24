@@ -64,7 +64,7 @@ class EnchantmentManagerImpl : EnchantmentManager {
         //register(RocketRideEnchantment)
         register(ExperienceEnchantment)
         //register(HoleDiggerEnchantment)
-        //register(VeinMinerEnchantment)
+        register(VeinMinerEnchantment)
         register(LumberJackEnchantment)
     }
 

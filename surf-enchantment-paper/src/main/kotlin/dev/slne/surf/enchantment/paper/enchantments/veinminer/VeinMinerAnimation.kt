@@ -58,7 +58,7 @@ object VeinMinerAnimation {
                     }
                 }
 
-                delay(1.ticks)
+                delay(5.ticks)
             }
         }
     }
