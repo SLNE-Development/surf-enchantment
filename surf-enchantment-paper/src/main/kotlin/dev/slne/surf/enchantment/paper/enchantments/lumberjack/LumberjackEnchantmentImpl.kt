@@ -37,6 +37,8 @@ class LumberjackEnchantmentImpl : AbstractCustomEnchantment(
     exclusiveWith = setOf(Enchantment.SILK_TOUCH.key()),
     tags = setOf(
         EnchantmentTagKeys.IN_ENCHANTING_TABLE,
+        EnchantmentTagKeys.ON_RANDOM_LOOT,
+        EnchantmentTagKeys.TREASURE
     ),
     maxLevel = MAX_LEVEL,
     listeners = setOf(LumberJackListener),
