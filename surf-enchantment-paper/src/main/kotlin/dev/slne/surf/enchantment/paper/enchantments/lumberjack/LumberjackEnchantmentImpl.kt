@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package dev.slne.surf.enchantment.paper.enchantments.lumberjack
 
 import com.google.auto.service.AutoService
@@ -7,6 +9,7 @@ import dev.slne.surf.enchantment.api.enchantment.AbstractCustomEnchantment
 import dev.slne.surf.enchantment.api.enchantments.LumberJackEnchantment
 import dev.slne.surf.enchantment.api.utils.CustomItemTypeTags
 import dev.slne.surf.enchantment.paper.enchantments.lumberjack.listeners.LumberJackListener
+import io.papermc.paper.registry.data.EnchantmentRegistryEntry
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys
 import net.kyori.adventure.text.Component.text
 import org.bukkit.enchantments.Enchantment
@@ -34,6 +37,15 @@ class LumberjackEnchantmentImpl : AbstractCustomEnchantment(
         }
     },
     supportedItems = CustomItemTypeTags.LUMBERJACK_KEY.tagKey,
+    weight = 2,
+    minimumCost = EnchantmentRegistryEntry.EnchantmentCost.of(
+        15,
+        9
+    ),
+    maximumCost = EnchantmentRegistryEntry.EnchantmentCost.of(
+        65,
+        9
+    ),
     exclusiveWith = setOf(Enchantment.SILK_TOUCH.key()),
     tags = setOf(
         EnchantmentTagKeys.IN_ENCHANTING_TABLE,
