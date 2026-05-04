@@ -12,7 +12,6 @@ import dev.slne.surf.enchantment.paper.enchantments.lumberjack.listeners.LumberJ
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys
 import net.kyori.adventure.text.Component.text
-import org.bukkit.enchantments.Enchantment
 
 @AutoService(LumberJackEnchantment::class)
 class LumberjackEnchantmentImpl : AbstractCustomEnchantment(
@@ -46,7 +45,6 @@ class LumberjackEnchantmentImpl : AbstractCustomEnchantment(
         65,
         9
     ),
-    exclusiveWith = setOf(Enchantment.SILK_TOUCH.key()),
     tags = setOf(
         EnchantmentTagKeys.IN_ENCHANTING_TABLE,
     ),
