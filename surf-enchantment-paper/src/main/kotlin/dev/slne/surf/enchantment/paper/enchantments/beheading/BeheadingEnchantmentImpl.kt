@@ -21,9 +21,14 @@ class BeheadingEnchantmentImpl : AbstractCustomEnchantment(
     key = key("surf", "beheading"),
     displayName = text("Beheading"),
     rarity = Rarity.EPIC,
-    description = {
+    description = { level ->
         line {
-            darkSpacer("Lässt den Kopf des Opfers fallen")
+            val chance = level * CHANCE_PER_LEVEL
+            darkSpacer("Gewährt eine")
+            appendSpace()
+            variableValue("$chance%")
+            appendSpace()
+            darkSpacer("Chance, den Kopf des Opfers fallen zu lassen")
         }
     },
     supportedItems = CustomItemTypeTags.BEHEADING_KEY.tagKey,
@@ -45,4 +50,8 @@ class BeheadingEnchantmentImpl : AbstractCustomEnchantment(
     exclusiveWith = setOf(EnchantmentKeys.LOOTING),
     maxLevel = 3,
     listeners = objectSetOf(BeheadingListener)
-), BeheadingEnchantment
+), BeheadingEnchantment {
+    companion object {
+        const val CHANCE_PER_LEVEL = 2
+    }
+}

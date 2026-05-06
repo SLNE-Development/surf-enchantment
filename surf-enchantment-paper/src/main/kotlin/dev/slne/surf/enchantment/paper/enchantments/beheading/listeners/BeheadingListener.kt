@@ -5,6 +5,7 @@ package dev.slne.surf.enchantment.paper.enchantments.beheading.listeners
 import dev.slne.surf.api.core.util.random
 import dev.slne.surf.enchantment.api.enchantments.BeheadingEnchantment
 import dev.slne.surf.enchantment.api.utils.getThisActiveEnchantmentOrNull
+import dev.slne.surf.enchantment.paper.enchantments.beheading.BeheadingEnchantmentImpl
 import org.bukkit.entity.EntityType
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -18,7 +19,7 @@ object BeheadingListener : Listener {
         val killer = event.entity.killer ?: return
         val (level) = killer.getThisActiveEnchantmentOrNull<BeheadingEnchantment>() ?: return
 
-        val chance = level * 2
+        val chance = level * BeheadingEnchantmentImpl.CHANCE_PER_LEVEL
 
         if (random.nextInt(0, 100) < chance) {
             event.drops.add(entity.type.getHead().createItemStack())

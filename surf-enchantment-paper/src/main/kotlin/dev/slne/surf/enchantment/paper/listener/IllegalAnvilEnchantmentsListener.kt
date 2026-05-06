@@ -1,11 +1,13 @@
+@file:Suppress("UnstableApiUsage")
+
 package dev.slne.surf.enchantment.paper.listener
 
+import io.papermc.paper.datacomponent.DataComponentTypes
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
 object IllegalAnvilEnchantmentsListener : Listener {
     @EventHandler
@@ -33,10 +35,9 @@ object IllegalAnvilEnchantmentsListener : Listener {
         }
     }
 
-    private fun isBook(item: ItemStack) = item.itemMeta is EnchantmentStorageMeta
+    private fun isBook(item: ItemStack) = item.hasData(DataComponentTypes.STORED_ENCHANTMENTS)
 
     private fun getStoredEnchants(item: ItemStack): Map<Enchantment, Int> {
-        val meta = item.itemMeta as? EnchantmentStorageMeta ?: return emptyMap()
-        return meta.storedEnchants
+        return item.getData(DataComponentTypes.STORED_ENCHANTMENTS)?.enchantments() ?: emptyMap()
     }
 }

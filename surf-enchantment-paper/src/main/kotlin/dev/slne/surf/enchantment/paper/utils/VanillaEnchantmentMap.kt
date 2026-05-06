@@ -134,7 +134,10 @@ enum class VanillaEnchantmentMap(
                 line {
                     darkSpacer("Verleiht eine")
                     variableValue(" %placeholder%% ")
-                    darkSpacer("Chance, einen Teil des eingehenden Schadens auf den Angreifer zu reflektieren")
+                    darkSpacer("Chance, einen Teil des")
+                }
+                line {
+                    darkSpacer("eingehenden Schadens auf den Angreifer zu reflektieren")
                 }
             },
             placeholders = { level ->
@@ -233,7 +236,10 @@ enum class VanillaEnchantmentMap(
                 line {
                     darkSpacer("Setzt Gegner für")
                     variableValue(" 4 ")
-                    darkSpacer("Sekunden in Brand und verursacht bei jedem Feuertick")
+                    darkSpacer("Sekunden in Brand und")
+                }
+                line {
+                    darkSpacer("verursacht bei jedem Feuertick")
                     variableValue(" %placeholder% ")
                     darkSpacer("Schaden")
                 }
@@ -561,7 +567,11 @@ enum class VanillaEnchantmentMap(
         description = levelBased(
             block = {
                 line {
-                    darkSpacer("Verwandelt Wasser innerhalb eines")
+                    darkSpacer("Verwandelt Wasser innerhalb")
+
+                }
+                line {
+                    darkSpacer("eines")
                     variableValue(" %placeholder% ")
                     darkSpacer("Blockradius des Spielers in Eis")
                 }
@@ -598,7 +608,10 @@ enum class VanillaEnchantmentMap(
         displayName = text("Riptide"),
         description = { _ ->
             line {
-                darkSpacer("Schleudert den Spieler beim Werfen eines Dreizacks im Wasser oder im Regen nach vorne")
+                darkSpacer("Schleudert den Spieler beim Werfen")
+            }
+            line {
+                darkSpacer("eines Dreizacks im Wasser oder im Regen nach vorne")
             }
         },
         rarity = Rarity.RARE,
@@ -608,7 +621,10 @@ enum class VanillaEnchantmentMap(
         displayName = text("Lunge"),
         description = { _ ->
             line {
-                darkSpacer("Schleudert den Spieler beim Stoßangriffe eines Speers nach vorne")
+                darkSpacer("Schleudert den Spieler bei")
+            }
+            line {
+                darkSpacer("Stoßangriffen eines Speers nach vorne")
             }
         },
         rarity = Rarity.RARE,
@@ -680,7 +696,7 @@ enum class VanillaEnchantmentMap(
                 }
                 line {
                     darkSpacer("und die Chance, seltene Drops zu erhalten, um")
-                    variableValue(" %rare%%")
+                    variableValue(" %rare% %")
                 }
             },
             placeholders = { level ->

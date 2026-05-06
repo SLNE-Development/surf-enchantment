@@ -12,7 +12,6 @@ import dev.slne.surf.enchantment.paper.enchantments.lumberjack.listeners.LumberJ
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys
 import net.kyori.adventure.text.Component.text
-import org.bukkit.enchantments.Enchantment
 
 @AutoService(LumberJackEnchantment::class)
 class LumberjackEnchantmentImpl : AbstractCustomEnchantment(
@@ -33,20 +32,19 @@ class LumberjackEnchantmentImpl : AbstractCustomEnchantment(
             appendSpace()
             variableValue("$blocksToMine Blöcke")
             appendSpace()
-            darkSpacer("eines Baumes auf einmal abzubauen.")
+            darkSpacer("eines Baumes auf einmal abzubauen")
         }
     },
     supportedItems = CustomItemTypeTags.LUMBERJACK_KEY.tagKey,
     weight = 2,
     minimumCost = EnchantmentRegistryEntry.EnchantmentCost.of(
-        15,
-        9
+        9,
+        7
     ),
     maximumCost = EnchantmentRegistryEntry.EnchantmentCost.of(
         65,
         9
     ),
-    exclusiveWith = setOf(Enchantment.SILK_TOUCH.key()),
     tags = setOf(
         EnchantmentTagKeys.IN_ENCHANTING_TABLE,
         EnchantmentTagKeys.ON_RANDOM_LOOT,

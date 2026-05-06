@@ -1,6 +1,7 @@
 package dev.slne.surf.enchantment.paper.utils
 
 import dev.slne.surf.enchantment.api.enchantments.telekinesis.PostTelekinesisItemEvent
+import dev.slne.surf.enchantment.api.enchantments.telekinesis.PreTelekinesisItemEvent
 import dev.slne.surf.enchantment.api.enchantments.telekinesis.TelekinesisEnchantment
 import dev.slne.surf.enchantment.api.utils.hasCustomEnchantment
 import org.bukkit.Location
@@ -32,26 +33,37 @@ object Dropper {
         totalExp: Int,
         event: BlockBreakEvent
     ) {
-        drops.forEach { leftover ->
-            val rest = player.inventory.addItem(leftover)
+        val preEvent = PreTelekinesisItemEvent(
+            player = player,
+            itemStacks = drops.toMutableList()
+        )
+
+        if (!preEvent.callEvent()) {
+            return
+        }
+
+        val modifiedDrops = preEvent.itemStacks
+
+        modifiedDrops.forEach { drop ->
+            val rest = player.inventory.addItem(drop)
 
             val postTelekinesisItemEvent = PostTelekinesisItemEvent(
                 player = player,
-                itemStack = leftover,
+                itemStack = drop,
                 notAddedToInventory = rest.toMap(),
                 originEvent = event
             )
 
             postTelekinesisItemEvent.callEvent()
 
-            rest.clear()
-            rest.putAll(postTelekinesisItemEvent.notAddedToInventory)
+            val finalRest = postTelekinesisItemEvent.notAddedToInventory.values.toList()
 
-            drop(player.location, rest.values.toList())
+            if (finalRest.isNotEmpty()) {
+                drop(player.location, finalRest)
+            }
         }
 
         player.giveExp(totalExp, true)
-
         event.expToDrop = 0
     }
 

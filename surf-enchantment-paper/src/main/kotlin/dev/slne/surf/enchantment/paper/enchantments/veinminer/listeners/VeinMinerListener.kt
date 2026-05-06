@@ -65,7 +65,7 @@ object VeinMinerListener : Listener {
         val blocks = blockResult.breakableBlocks.take(VeinMinerEnchantmentImpl.MAX_ORES_TO_MINE)
 
         BlockBreakHandler.handleBlockBreak(
-            cooldown = (blocks.size * 2.toLong()).seconds,
+            cooldown = (blocks.size * VeinMinerEnchantmentImpl.COOLDOWN_SECONDS_PER_BLOCK).seconds,
             blocks = blocks,
             cooldownHandler = cooldownHandler,
             event = event,

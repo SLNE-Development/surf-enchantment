@@ -19,20 +19,19 @@ class VeinMinerEnchantmentImpl : AbstractCustomEnchantment(
     displayName = text("Vain Miner"),
     rarity = Rarity.EPIC,
     description = {
-        line { darkSpacer("Erzadern werden vollständig abgebaut") }
         line {
-            darkSpacer("Es werden maximal")
+            darkSpacer("Baut bis zu")
             appendSpace()
-            variableValue("10 Blöcke")
+            variableValue("$MAX_ORES_TO_MINE Erze")
             appendSpace()
-            darkSpacer("pro Nutzung abgebaut.")
+            darkSpacer("einer Ader auf einmal ab")
         }
         line {
-            darkSpacer("Die Abklinzeit beträgt")
+            darkSpacer("Abklingzeit:")
             appendSpace()
-            variableValue("2 Sekunden")
+            variableValue("$COOLDOWN_SECONDS_PER_BLOCK Sekunden")
             appendSpace()
-            darkSpacer("pro abgebautem Block.")
+            darkSpacer("pro abgebautem Erz")
         }
     },
     supportedItems = CustomItemTypeTags.VEIN_MINER_KEY.tagKey,
@@ -55,5 +54,6 @@ class VeinMinerEnchantmentImpl : AbstractCustomEnchantment(
 ), VeinMinerEnchantment {
     companion object {
         const val MAX_ORES_TO_MINE = 10
+        const val COOLDOWN_SECONDS_PER_BLOCK = 2L
     }
 }

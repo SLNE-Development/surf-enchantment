@@ -2,17 +2,19 @@
 
 package dev.slne.surf.enchantment.paper.enchantments.rocketsaver
 
+import com.google.auto.service.AutoService
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.api.core.rarity.Rarity
 import dev.slne.surf.enchantment.api.enchantment.AbstractCustomEnchantment
 import dev.slne.surf.enchantment.api.enchantments.RocketSaverEnchantment
 import dev.slne.surf.enchantment.api.utils.CustomItemTypeTags
+import dev.slne.surf.enchantment.paper.enchantments.beheading.BeheadingEnchantmentImpl.Companion.CHANCE_PER_LEVEL
 import dev.slne.surf.enchantment.paper.enchantments.rocketsaver.listeners.RocketSaverListener
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry
 import org.bukkit.inventory.EquipmentSlotGroup
 
-//@AutoService(RocketSaverEnchantment::class)
+@AutoService(RocketSaverEnchantment::class)
 class RocketSaverEnchantmentImpl : AbstractCustomEnchantment(
     key = key("surf", "rocket_saver"),
     displayName = text("Rocket Saver"),
@@ -24,7 +26,10 @@ class RocketSaverEnchantmentImpl : AbstractCustomEnchantment(
             appendSpace()
             variableValue("$chance%")
             appendSpace()
-            darkSpacer("Chance, um keine Feuerwerkskörper zu verbrauchen, wenn man mit der Elytra boostet")
+            darkSpacer("Chance, Beim Boost")
+        }
+        line {
+            darkSpacer("keine Feuerwerkskörper zu verbrauchen")
         }
     },
     supportedItems = CustomItemTypeTags.ROCKET_SAVER_KEY.tagKey,
@@ -39,6 +44,7 @@ class RocketSaverEnchantmentImpl : AbstractCustomEnchantment(
     ),
     activeSlots = setOf(EquipmentSlotGroup.CHEST),
     maxLevel = 3,
+    obtainableFromGameplay = false,
     listeners = setOf(RocketSaverListener)
 ), RocketSaverEnchantment {
     companion object {

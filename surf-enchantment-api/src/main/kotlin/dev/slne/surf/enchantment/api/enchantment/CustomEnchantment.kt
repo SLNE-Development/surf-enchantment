@@ -29,6 +29,16 @@ interface CustomEnchantment : Enchantable {
     val activeSlots: Set<EquipmentSlotGroup>?
     val exclusiveWith: Set<Key>?
     val tags: Set<TagKey<Enchantment>>?
+
+    /**
+     * Controls whether this enchantment may be exposed through vanilla gameplay sources
+     * such as enchanting tables, generated loot, mob equipment or trades.
+     *
+     * Event-only enchantments should set this to false and must not be assigned
+     * gameplay source tags.
+     */
+    val obtainableFromGameplay: Boolean get() = true
+
     val typedKey: TypedKey<Enchantment>
 
     val bukkitEnchantment: Enchantment

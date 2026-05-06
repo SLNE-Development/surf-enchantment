@@ -30,6 +30,21 @@ abstract class AbstractCustomEnchantment(
     override val primaryItems: TagKey<ItemType>? = null,
     override val weight: @Range(from = 1, to = 1024) Int? = 1,
     override val maxLevel: @Range(from = 1, to = 255) Int? = 1,
+
+    /**
+     * The enchantment cost determines the availability of enchantment levels in the Enchanting Table.
+     * * The cost for a specific level is calculated as:
+     * `base + (level - 1) * perLevelCost`
+     *
+     * - **minimumCost**: The threshold a table's "enchanting level" must reach for this level to appear.
+     * - **maximumCost**: The threshold above which this enchantment level will no longer appear.
+     *
+     * ### Standard Table (Max Level 30) Configuration:
+     * To limit the Enchanting Table to a specific maximum level while allowing higher levels
+     * via Anvils (e.g., Table max Level 4, total max Level 5), use values like:
+     * `minimumCost = of(9, 7)` -> Level 4 = 30 (Possible), Level 5 = 37 (Impossible in Table).
+     */
+
     override val minimumCost: EnchantmentRegistryEntry.EnchantmentCost? = EnchantmentRegistryEntry.EnchantmentCost.of(
         0,
         0
@@ -42,6 +57,7 @@ abstract class AbstractCustomEnchantment(
     override val activeSlots: Set<EquipmentSlotGroup> = objectSetOf(EquipmentSlotGroup.ANY),
     override val exclusiveWith: Set<Key>? = null,
     override val tags: Set<TagKey<Enchantment>>? = objectSetOf(),
+    override val obtainableFromGameplay: Boolean = true,
     override val typedKey: TypedKey<Enchantment> = TypedKey.create(RegistryKey.ENCHANTMENT, key),
     override val listeners: Set<Listener> = objectSetOf(),
     override val jobs: Set<EnchantmentJob> = objectSetOf(),

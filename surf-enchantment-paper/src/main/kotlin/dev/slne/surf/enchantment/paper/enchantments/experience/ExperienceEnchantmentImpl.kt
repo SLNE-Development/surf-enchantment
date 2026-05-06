@@ -20,9 +20,12 @@ class ExperienceEnchantmentImpl : AbstractCustomEnchantment(
     key = key("surf", "experience"),
     displayName = text("Experience"),
     rarity = Rarity.EPIC,
-    description = {
+    description = { level ->
         line {
-            darkSpacer("Droppt dir mehr Erfahrung")
+            val bonus = level * XP_BONUS_PERCENT_PER_LEVEL
+            darkSpacer("Erhöht gedroppte Erfahrung um")
+            appendSpace()
+            variableValue("$bonus%")
         }
     },
     supportedItems = CustomItemTypeTags.EXPERIENCE_KEY.tagKey,
@@ -44,4 +47,8 @@ class ExperienceEnchantmentImpl : AbstractCustomEnchantment(
     activeSlots = setOf(EquipmentSlotGroup.HAND),
     maxLevel = 3,
     listeners = setOf(ExperienceListener)
-), ExperienceEnchantment
+), ExperienceEnchantment {
+    companion object {
+        const val XP_BONUS_PERCENT_PER_LEVEL = 10
+    }
+}

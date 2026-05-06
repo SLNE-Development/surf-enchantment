@@ -60,7 +60,7 @@ class EnchantmentManagerImpl : EnchantmentManager {
         register(SilentNightEnchantment)
         register(SilentGazeEnchantment)
         register(BeheadingEnchantment)
-        //register(RocketSaverEnchantment)
+        register(RocketSaverEnchantment)
         //register(RocketRideEnchantment)
         register(ExperienceEnchantment)
         //register(HoleDiggerEnchantment)

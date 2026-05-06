@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package dev.slne.surf.enchantment.paper.enchantments.rocketride.listeners
 
 import dev.slne.surf.api.core.messages.adventure.buildText
@@ -6,9 +8,10 @@ import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.enchantment.api.enchantment.EnchantmentManager
 import dev.slne.surf.enchantment.api.enchantments.RocketRideEnchantment
 import dev.slne.surf.enchantment.api.utils.hasCustomEnchantment
-import dev.slne.surf.enchantment.paper.enchantments.rocketride.RocketBoost
+import dev.slne.surf.enchantment.paper.enchantments.rocketride.RocketRideEnchantmentImpl
 import dev.slne.surf.enchantment.paper.enchantments.rocketride.RocketRideBoostService
 import dev.slne.surf.enchantment.paper.utils.CooldownHandler
+import io.papermc.paper.datacomponent.DataComponentTypes
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.sound.Sound
 import org.bukkit.GameMode
@@ -22,7 +25,6 @@ import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntityDropItemEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.meta.FireworkMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.Sound as BukkitSound
 
@@ -35,12 +37,6 @@ object RocketRideBoostListener : Listener {
         appendSpace()
         error("wieder fit.")
     })
-
-    private val ROCKET_PROPERTIES = mapOf(
-        1 to RocketBoost(1.4, 0.5, 5),
-        2 to RocketBoost(1.9, 0.7, 10),
-        3 to RocketBoost(2.6, 0.9, 15)
-    )
 
     init {
         cooldownHandler.registerExpirationListener { uuid ->
@@ -103,16 +99,15 @@ object RocketRideBoostListener : Listener {
 
         if (!cooldownHandler.checkCooldown(happyGhast.uniqueId, player)) return
 
-        val rocketMeta = item.itemMeta as? FireworkMeta ?: return
-        val tier = rocketMeta.power.coerceIn(1, 3)
-        val boost = ROCKET_PROPERTIES[tier] ?: ROCKET_PROPERTIES[1]!!
+        val tier = (item.getData(DataComponentTypes.FIREWORKS)?.flightDuration() ?: return).coerceIn(1, 3)
+        val boost = RocketRideEnchantmentImpl.boostForLevel(tier)
 
         RocketRideBoostService.startBoost(
             ghast = happyGhast,
             rider = player,
-            power = 0.9 * boost.multiplier,
+            power = RocketRideEnchantmentImpl.BASE_POWER * boost.multiplier,
             upward = boost.upward,
-            durationTicks = 20 + tier * 10
+            durationTicks = RocketRideEnchantmentImpl.durationTicksForLevel(tier)
         )
 
         if (player.gameMode != GameMode.CREATIVE) {

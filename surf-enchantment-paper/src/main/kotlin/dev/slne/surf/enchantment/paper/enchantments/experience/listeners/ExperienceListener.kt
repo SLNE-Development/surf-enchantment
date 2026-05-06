@@ -2,6 +2,7 @@ package dev.slne.surf.enchantment.paper.enchantments.experience.listeners
 
 import dev.slne.surf.enchantment.api.enchantments.ExperienceEnchantment
 import dev.slne.surf.enchantment.api.utils.getThisActiveEnchantmentOrNull
+import dev.slne.surf.enchantment.paper.enchantments.experience.ExperienceEnchantmentImpl
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -35,7 +36,7 @@ object ExperienceListener : Listener {
     }
 
     private fun calculateDrops(xp: Int, level: Int): Double {
-        return (xp * (level / 10.0)) + xp
+        return (xp * (level * ExperienceEnchantmentImpl.XP_BONUS_PERCENT_PER_LEVEL / 100.0)) + xp
     }
 }
 

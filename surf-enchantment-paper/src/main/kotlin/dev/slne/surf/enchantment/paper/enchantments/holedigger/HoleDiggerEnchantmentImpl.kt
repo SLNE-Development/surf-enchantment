@@ -20,7 +20,7 @@ class HoleDiggerEnchantmentImpl : AbstractCustomEnchantment(
     displayName = text("Hole Digger"),
     rarity = Rarity.MYTHIC,
     description = {
-        line { darkSpacer("Gräbt ein Loch in definierter Größe.") }
+        line { darkSpacer("Gräbt ein Loch in definierter Größe") }
     },
     supportedItems = CustomItemTypeTags.HOLE_DIGGER_KEY.tagKey,
     weight = 2,
