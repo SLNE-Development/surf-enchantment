@@ -19,7 +19,10 @@ enum class CustomItemTypeTags(
 ) {
     BEHEADING_KEY(
         key("surf", "items_beheading"),
-        TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_WEAPON)
+        TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_WEAPON),
+        TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_TRIDENT),
+        TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_BOW),
+        TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_CROSSBOW),
     ),
 
     EXPERIENCE_KEY(
