@@ -12,10 +12,7 @@ import dev.slne.surf.enchantment.paper.plugin
 import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.entity.GlowItemFrame
-import org.bukkit.entity.ItemFrame
-import org.bukkit.entity.Painting
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -72,6 +69,10 @@ object TelekinesisListener : Listener {
     fun onEntityDeath(event: EntityDeathEvent) {
         if (event.isCancelled) return
 
+        if (event.entityType == EntityType.PLAYER) {
+            return
+        }
+
         val player = event.entity.killer ?: return
         if (!player.inventory.itemInMainHand.hasCustomEnchantment<TelekinesisEnchantment>()) return
 
@@ -97,7 +98,8 @@ object TelekinesisListener : Listener {
 
         when (hanging) {
             is ItemFrame -> {
-                val material = if (hanging is GlowItemFrame) Material.GLOW_ITEM_FRAME else Material.ITEM_FRAME
+                val material =
+                    if (hanging is GlowItemFrame) Material.GLOW_ITEM_FRAME else Material.ITEM_FRAME
                 drops.add(ItemStack(material))
 
                 val innerItem = hanging.item
@@ -109,6 +111,7 @@ object TelekinesisListener : Listener {
             is Painting -> {
                 drops.add(ItemStack(Material.PAINTING))
             }
+
             else -> return
         }
 
