@@ -17,7 +17,6 @@ enum class CustomItemTypeTags(
     key: Key,
     vararg tags: TagEntry<ItemType>
 ) {
-
     BEHEADING_KEY(
         key("surf", "items_beheading"),
         TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_WEAPON),
@@ -95,6 +94,11 @@ enum class CustomItemTypeTags(
     VEIN_MINER_KEY(
         key("surf", "items_vein_miner"),
         TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES)
+    ),
+
+    THROWBACK_KEY(
+        key("surf", "items_throwback"),
+        TagEntry.valueEntry(ItemTypeKeys.TRIDENT)
     );
 
     val tagKey = TagKey.create(RegistryKey.ITEM, key)

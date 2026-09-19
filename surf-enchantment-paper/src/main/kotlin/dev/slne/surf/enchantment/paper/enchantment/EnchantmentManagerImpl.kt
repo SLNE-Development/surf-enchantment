@@ -66,6 +66,7 @@ class EnchantmentManagerImpl : EnchantmentManager {
         //register(HoleDiggerEnchantment)
         //register(VeinMinerEnchantment)
         register(LumberJackEnchantment)
+        register(ThrowBackEnchantment)
     }
 
     @InternalEnchantmentApi
