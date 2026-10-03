@@ -8,8 +8,8 @@ import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.enchantment.api.enchantment.EnchantmentManager
 import dev.slne.surf.enchantment.api.enchantments.RocketRideEnchantment
 import dev.slne.surf.enchantment.api.utils.hasCustomEnchantment
-import dev.slne.surf.enchantment.paper.enchantments.rocketride.RocketRideEnchantmentImpl
 import dev.slne.surf.enchantment.paper.enchantments.rocketride.RocketRideBoostService
+import dev.slne.surf.enchantment.paper.enchantments.rocketride.RocketRideEnchantmentImpl
 import dev.slne.surf.enchantment.paper.utils.CooldownHandler
 import io.papermc.paper.datacomponent.DataComponentTypes
 import kotlinx.coroutines.withContext
@@ -26,6 +26,7 @@ import org.bukkit.event.entity.EntityDropItemEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
+import kotlin.time.Duration.Companion.seconds
 import org.bukkit.Sound as BukkitSound
 
 object RocketRideBoostListener : Listener {
@@ -99,7 +100,8 @@ object RocketRideBoostListener : Listener {
 
         if (!cooldownHandler.checkCooldown(happyGhast.uniqueId, player)) return
 
-        val tier = (item.getData(DataComponentTypes.FIREWORKS)?.flightDuration() ?: return).coerceIn(1, 3)
+        val tier =
+            (item.getData(DataComponentTypes.FIREWORKS)?.flightDuration() ?: return).coerceIn(1, 3)
         val boost = RocketRideEnchantmentImpl.boostForLevel(tier)
 
         RocketRideBoostService.startBoost(
@@ -114,8 +116,7 @@ object RocketRideBoostListener : Listener {
             item.amount -= 1
         }
 
-        //cooldownHandler.applyCooldown(player, happyGhast.uniqueId, boost.cooldownSeconds.seconds) TODO: Implement
-
+        cooldownHandler.applyCooldown(player, boost.cooldownSeconds.seconds)
         happyGhast.passengers.forEach { passenger ->
             passenger.sendActionBar(buildText { success("Der Happy Ghast wurde geboostet!") })
             passenger.playSound {
