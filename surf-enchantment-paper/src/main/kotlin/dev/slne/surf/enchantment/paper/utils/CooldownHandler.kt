@@ -1,12 +1,14 @@
 package dev.slne.surf.enchantment.paper.utils
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.enchantment.api.enchantment.EnchantmentJob
 import dev.slne.surf.enchantment.api.enchantment.EnchantmentManager.Companion.launch
+import dev.slne.surf.enchantment.paper.plugin
 import kotlinx.coroutines.CoroutineScope
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -47,7 +49,7 @@ class CooldownHandler(
             expirationMessage?.let { server.getPlayer(uuid)?.sendText(it) }
 
             expirationListeners.forEach { listener ->
-                launch {
+                launch(plugin.globalRegionDispatcher) {
                     listener(uuid)
                 }
             }
