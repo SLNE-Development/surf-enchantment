@@ -27,7 +27,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.persistence.PersistentDataType
-import kotlin.time.Duration.Companion.seconds
 import org.bukkit.Sound as BukkitSound
 
 object RocketRideBoostListener : Listener {
@@ -104,13 +103,12 @@ object RocketRideBoostListener : Listener {
         val tier =
             (item.getData(DataComponentTypes.FIREWORKS)?.flightDuration() ?: return).coerceIn(1, RocketRideEnchantmentImpl.MAX_ROCKET_TIER)
         val boost = RocketRideEnchantmentImpl.boostForRocketTier(tier)
-        val levelMultiplier = RocketRideEnchantmentImpl.strengthMultiplierForLevel(level)
 
         RocketRideBoostService.startBoost(
             ghast = happyGhast,
             rider = player,
-            power = RocketRideEnchantmentImpl.BASE_POWER * boost.multiplier * levelMultiplier,
-            upward = boost.upward * levelMultiplier,
+            power = RocketRideEnchantmentImpl.BASE_POWER * boost.multiplier,
+            upward = boost.upward,
             durationTicks = RocketRideEnchantmentImpl.durationTicksForRocketTier(tier)
         )
 
@@ -118,7 +116,7 @@ object RocketRideBoostListener : Listener {
             item.amount -= 1
         }
 
-        cooldownHandler.applyCooldown(player, boost.cooldownSeconds.seconds, happyGhast.uniqueId)
+        cooldownHandler.applyCooldown(player, RocketRideEnchantmentImpl.cooldownForLevel(level), happyGhast.uniqueId)
         happyGhast.passengers.forEach { passenger ->
             passenger.sendActionBar(buildText { success("Der Happy Ghast wurde geboostet!") })
             passenger.playSound {
@@ -129,9 +127,6 @@ object RocketRideBoostListener : Listener {
         }
     }
 
-    /**
-     * Returns the Rocket Ride level stored on this ghast, or `null` if it has no Rocket Ride harness.
-     */
     private fun HappyGhast.rocketRideLevel(): Int? {
         val stored = persistentDataContainer.get(specialHappyGhastKey, PersistentDataType.BYTE)
             ?: return null
