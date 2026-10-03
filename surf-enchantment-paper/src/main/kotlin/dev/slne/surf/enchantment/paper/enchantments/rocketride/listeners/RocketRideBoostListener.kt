@@ -41,9 +41,8 @@ object RocketRideBoostListener : Listener {
 
     init {
         cooldownHandler.registerExpirationListener { uuid ->
-            withContext(EnchantmentManager.globalRegionDispatcher) {
-                val entity = server.getEntity(uuid) ?: return@withContext
-
+            val entity = server.getEntity(uuid) ?: return@registerExpirationListener
+            withContext(EnchantmentManager.entityDispatcher.invoke(entity)) {
                 entity.passengers.filterIsInstance<Player>().forEach { passenger ->
                     passenger.sendActionBar(
                         buildText {
