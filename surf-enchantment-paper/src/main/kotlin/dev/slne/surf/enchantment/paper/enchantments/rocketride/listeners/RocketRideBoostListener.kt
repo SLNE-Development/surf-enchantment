@@ -116,7 +116,7 @@ object RocketRideBoostListener : Listener {
             item.amount -= 1
         }
 
-        cooldownHandler.applyCooldown(player, boost.cooldownSeconds.seconds)
+        cooldownHandler.applyCooldown(player, boost.cooldownSeconds.seconds, happyGhast.uniqueId)
         happyGhast.passengers.forEach { passenger ->
             passenger.sendActionBar(buildText { success("Der Happy Ghast wurde geboostet!") })
             passenger.playSound {

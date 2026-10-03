@@ -21,7 +21,7 @@ private val lumberJackReductionKey =
     NamespacedKey("surf-skill-paper", "lumberjack_cooldown_reduction")
 
 class CooldownHandler(
-    private val expirationMessage: SurfComponentBuilder.() -> Unit = {},
+    private val expirationMessage: (SurfComponentBuilder.() -> Unit)? = null,
     private val notReadyMessage: SurfComponentBuilder.(Long) -> Unit = {},
     private val defaultCooldown: Duration = 5.minutes,
     private val allowReduction: Boolean = false,
@@ -44,7 +44,7 @@ class CooldownHandler(
         cooldowns.asMap().entries.removeIf { (uuid, expireTime) ->
             if (expireTime.isAfter(now)) return@removeIf false
 
-            server.getPlayer(uuid)?.sendText(expirationMessage)
+            expirationMessage?.let { server.getPlayer(uuid)?.sendText(it) }
 
             expirationListeners.forEach { listener ->
                 launch {
@@ -78,8 +78,11 @@ class CooldownHandler(
         return false
     }
 
-    fun applyCooldown(player: Player, cooldown: Duration = defaultCooldown) {
-        val uuid = player.uniqueId
+    fun applyCooldown(
+        player: Player,
+        cooldown: Duration = defaultCooldown,
+        uuid: UUID = player.uniqueId
+    ) {
 
         if (!allowReduction) {
             cooldowns.put(

@@ -19,6 +19,8 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 object RocketRideBoostService {
+    private const val END_VELOCITY_FACTOR = 0.35
+
     private val activeBoosts = ConcurrentHashMap<UUID, Job>()
 
     fun isBoosting(ghast: HappyGhast): Boolean {
@@ -89,6 +91,7 @@ object RocketRideBoostService {
         }
 
         val peakVelocity = currentVelocity.clone()
+        val endVelocity = peakVelocity.clone().multiply(END_VELOCITY_FACTOR)
 
         var slowTick = 0
         while (slowTick < slowTicks && ghast.isValid && !ghast.isDead) {
@@ -97,7 +100,7 @@ object RocketRideBoostService {
             val multiplier = cos(progress * (PI / 2))
 
             val interpolated = peakVelocity.clone().multiply(multiplier)
-                .add(startVelocity.clone().multiply(1 - multiplier))
+                .add(endVelocity.clone().multiply(1 - multiplier))
 
             ghast.velocity = interpolated
             rider.fallDistance = 0f
@@ -108,9 +111,9 @@ object RocketRideBoostService {
             delay(1.ticks)
         }
 
+        // Velocity is no longer overridden from here on, so the remaining momentum
+        // decays naturally through vanilla drag instead of stopping abruptly.
         sendProgressBar(ghast, boostTicks + slowTick, totalTicks)
-
-        ghast.velocity = startVelocity
     }
 
     fun stopBoost(ghast: HappyGhast) {
