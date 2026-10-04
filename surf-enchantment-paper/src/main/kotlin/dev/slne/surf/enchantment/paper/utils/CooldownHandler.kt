@@ -1,12 +1,14 @@
 package dev.slne.surf.enchantment.paper.utils
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.enchantment.api.enchantment.EnchantmentJob
 import dev.slne.surf.enchantment.api.enchantment.EnchantmentManager.Companion.launch
+import dev.slne.surf.enchantment.paper.plugin
 import kotlinx.coroutines.CoroutineScope
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -21,7 +23,7 @@ private val lumberJackReductionKey =
     NamespacedKey("surf-skill-paper", "lumberjack_cooldown_reduction")
 
 class CooldownHandler(
-    private val expirationMessage: SurfComponentBuilder.() -> Unit = {},
+    private val expirationMessage: (SurfComponentBuilder.() -> Unit)? = null,
     private val notReadyMessage: SurfComponentBuilder.(Long) -> Unit = {},
     private val defaultCooldown: Duration = 5.minutes,
     private val allowReduction: Boolean = false,
@@ -44,10 +46,10 @@ class CooldownHandler(
         cooldowns.asMap().entries.removeIf { (uuid, expireTime) ->
             if (expireTime.isAfter(now)) return@removeIf false
 
-            server.getPlayer(uuid)?.sendText(expirationMessage)
+            expirationMessage?.let { server.getPlayer(uuid)?.sendText(it) }
 
             expirationListeners.forEach { listener ->
-                launch {
+                launch(plugin.globalRegionDispatcher) {
                     listener(uuid)
                 }
             }
@@ -78,8 +80,11 @@ class CooldownHandler(
         return false
     }
 
-    fun applyCooldown(player: Player, cooldown: Duration = defaultCooldown) {
-        val uuid = player.uniqueId
+    fun applyCooldown(
+        player: Player,
+        cooldown: Duration = defaultCooldown,
+        uuid: UUID = player.uniqueId
+    ) {
 
         if (!allowReduction) {
             cooldowns.put(
