@@ -2,6 +2,7 @@ package dev.slne.surf.enchantment.paper.utils
 
 import dev.slne.surf.enchantment.api.utils.applyItemDamage
 import dev.slne.surf.enchantment.paper.utils.events.FakeBlockBreakEvent
+import org.bukkit.Effect
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -15,7 +16,8 @@ object BlockBreakHandler {
         cooldownHandler: CooldownHandler,
         cooldown: Duration,
         event: BlockBreakEvent,
-        events: List<FakeBlockBreakEvent>
+        events: List<FakeBlockBreakEvent>,
+        playBreakEffect: Boolean = false
     ) {
         val player = event.player
         val item = player.inventory.itemInMainHand
@@ -41,6 +43,11 @@ object BlockBreakHandler {
 
             drops.addAll(block.getDrops(item))
             totalExp += breakEvent.expToDrop
+
+            if (playBreakEffect) {
+                block.world.playEffect(block.location, Effect.STEP_SOUND, block.blockData)
+            }
+
             block.type = Material.AIR
         }
 
