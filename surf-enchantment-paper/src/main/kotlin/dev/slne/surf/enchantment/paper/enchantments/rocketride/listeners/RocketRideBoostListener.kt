@@ -79,9 +79,12 @@ object RocketRideBoostListener : Listener {
         val happyGhast = event.entity as? HappyGhast ?: return
 
         val level = happyGhast.rocketRideLevel() ?: return
-        happyGhast.persistentDataContainer.remove(specialHappyGhastKey)
 
-        event.itemDrop.itemStack.addEnchantment(RocketRideEnchantment.bukkitEnchantment, level)
+        val droppedItem = event.itemDrop.itemStack
+        if (!RocketRideEnchantment.bukkitEnchantment.canEnchantItem(droppedItem)) return
+
+        happyGhast.persistentDataContainer.remove(specialHappyGhastKey)
+        droppedItem.addEnchantment(RocketRideEnchantment.bukkitEnchantment, level)
     }
 
     @EventHandler
