@@ -64,7 +64,8 @@ object LumberJackListener : Listener {
             blocks = blocksToMine,
             cooldownHandler = cooldownHandler,
             event = event,
-            events = blockResult.events
+            events = blockResult.events,
+            playBreakEffect = true
         )
     }
 }
