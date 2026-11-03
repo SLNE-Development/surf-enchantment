@@ -1,8 +1,5 @@
 package dev.slne.surf.enchantment.paper.enchantments.telekinesis.listeners
 
-import com.github.shynixn.mccoroutine.folia.entityDispatcher
-import com.github.shynixn.mccoroutine.folia.launch
-import com.github.shynixn.mccoroutine.folia.ticks
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.enchantment.api.enchantments.telekinesis.PostTelekinesisItemEvent
 import dev.slne.surf.enchantment.api.enchantments.telekinesis.PreTelekinesisItemEvent
@@ -10,7 +7,6 @@ import dev.slne.surf.enchantment.api.enchantments.telekinesis.TelekinesisEnchant
 import dev.slne.surf.enchantment.api.utils.hasCustomEnchantment
 import dev.slne.surf.enchantment.paper.plugin
 import dev.slne.surf.enchantment.paper.utils.addItemPreferringOffhand
-import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.*
@@ -29,7 +25,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.time.Duration.Companion.milliseconds
 
 
 object TelekinesisListener : Listener {
@@ -38,6 +33,8 @@ object TelekinesisListener : Listener {
 
     private val telekinesisTargets: MutableMap<UUID, SuppressedVehicle> =
         ConcurrentHashMap<UUID, SuppressedVehicle>()
+
+    private val captureDepth: ThreadLocal<Int> = ThreadLocal.withInitial { 0 }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onBlockBreak(event: BlockBreakEvent) {
@@ -121,56 +118,68 @@ object TelekinesisListener : Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onVehicleDestroy(event: VehicleDestroyEvent) {
         val player = event.attacker as? Player ?: return
         if (!player.inventory.itemInMainHand.hasCustomEnchantment<TelekinesisEnchantment>()) return
 
         val vehicle = event.vehicle
+        val vehicleId = vehicle.uniqueId
         val dropLocation = vehicle.location.clone()
 
-        telekinesisTargets[vehicle.uniqueId] = SuppressedVehicle(player.uniqueId, dropLocation)
+        telekinesisTargets[vehicleId] = SuppressedVehicle(player.uniqueId, dropLocation)
 
-        plugin.launch(plugin.entityDispatcher(vehicle)) {
-            delay(1.ticks.milliseconds)
-            telekinesisTargets.remove(vehicle.uniqueId)
-        }
+        // The vehicle drops its contents and itself synchronously right after this event. Removing the
+        // entry on the next tick of the owning region keeps it for all of those drops and can never run
+        // in the middle of the destruction.
+        server.regionScheduler.runDelayed(plugin, dropLocation, { telekinesisTargets.remove(vehicleId) }, 1L)
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onItemSpawn(event: ItemSpawnEvent) {
+        // Spawns caused while a captured item is being processed (leftover drops, items spawned by
+        // Pre/Post listeners) must not be captured again, otherwise a full inventory recurses forever.
+        if (captureDepth.get() > 0) return
+
         val loc = event.location
 
         for (entry in telekinesisTargets.entries) {
             val (playerUuid, vehicleLocation) = entry.value
+            if (loc.world != vehicleLocation.world || loc.distanceSquared(vehicleLocation) >= 4) continue
+
             val player = server.getPlayer(playerUuid) ?: continue
+            if (!canReceive(player, vehicleLocation)) continue
 
-            if (loc.world == player.world && loc.world == vehicleLocation.world && loc.distanceSquared(
-                    vehicleLocation
-                ) < 4
-            ) {
-                val stack = event.entity.itemStack
-                val drops = listOf(stack)
+            captureDepth.set(captureDepth.get() + 1)
+            try {
+                val drops = listOf(event.entity.itemStack.clone())
 
-                // Remove the entry and cancel the event BEFORE calling addDropsToInventory
-                // to prevent infinite recursion: if the inventory is full, dropItemNaturally
-                // would fire another ItemSpawnEvent at the same location, re-triggering this handler.
-                telekinesisTargets.remove(entry.key)
+                addDropsToInventory(player, drops, event, vehicleLocation.clone()) {
+                    if (!canReceive(player, vehicleLocation)) return@addDropsToInventory false
 
-                if (addDropsToInventory(
-                        player = player,
-                        drops = drops,
-                        originEvent = event,
-                        dropLocation = vehicleLocation.clone()
-                    )
-                ) {
+                    // Removing the entity as well as cancelling prevents a later listener from
+                    // un-cancelling the spawn and duplicating the item that is about to be inserted.
                     event.isCancelled = true
+                    event.entity.remove()
+                    true
                 }
-
-                break
+            } finally {
+                captureDepth.set(captureDepth.get() - 1)
             }
+
+            break
         }
     }
+
+    /**
+     * Checks whether [player] may receive captured vehicle drops. Region ownership is checked first
+     * because the other checks read entity state, which Folia only allows from the owning thread.
+     */
+    private fun canReceive(player: Player, vehicleLocation: Location): Boolean =
+        server.isOwnedByCurrentRegion(player) &&
+                !player.isDead &&
+                player.isValid &&
+                player.world == vehicleLocation.world
 
     @EventHandler
     fun onPlayerShearEntity(event: PlayerShearEntityEvent) {
@@ -189,7 +198,8 @@ object TelekinesisListener : Listener {
         player: Player,
         drops: List<ItemStack>,
         originEvent: Event,
-        dropLocation: Location
+        dropLocation: Location,
+        beforeInsert: () -> Boolean = { true }
     ): Boolean {
         val preEvent = PreTelekinesisItemEvent(
             player = player,
@@ -197,6 +207,10 @@ object TelekinesisListener : Listener {
         )
 
         if (!preEvent.callEvent()) {
+            return false
+        }
+
+        if (!beforeInsert()) {
             return false
         }
 
