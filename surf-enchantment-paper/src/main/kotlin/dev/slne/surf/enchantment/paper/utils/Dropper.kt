@@ -45,7 +45,7 @@ object Dropper {
         val modifiedDrops = preEvent.itemStacks
 
         modifiedDrops.forEach { drop ->
-            val rest = player.inventory.addItem(drop)
+            val rest = player.inventory.addItemPreferringOffhand(drop)
 
             val postTelekinesisItemEvent = PostTelekinesisItemEvent(
                 player = player,
