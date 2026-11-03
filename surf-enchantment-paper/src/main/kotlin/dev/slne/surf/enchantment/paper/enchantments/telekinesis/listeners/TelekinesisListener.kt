@@ -9,6 +9,7 @@ import dev.slne.surf.enchantment.api.enchantments.telekinesis.PreTelekinesisItem
 import dev.slne.surf.enchantment.api.enchantments.telekinesis.TelekinesisEnchantment
 import dev.slne.surf.enchantment.api.utils.hasCustomEnchantment
 import dev.slne.surf.enchantment.paper.plugin
+import dev.slne.surf.enchantment.paper.utils.addItemPreferringOffhand
 import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.Material
@@ -202,7 +203,7 @@ object TelekinesisListener : Listener {
         val modifiedDrops = preEvent.itemStacks
 
         modifiedDrops.forEach { drop ->
-            val notAdded = player.inventory.addItem(drop)
+            val notAdded = player.inventory.addItemPreferringOffhand(drop)
 
             val postTelekinesisItemEvent = PostTelekinesisItemEvent(
                 player = player,
