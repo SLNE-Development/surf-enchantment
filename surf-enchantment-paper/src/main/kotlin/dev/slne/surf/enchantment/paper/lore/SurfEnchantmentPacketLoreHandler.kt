@@ -29,6 +29,7 @@ internal object SurfEnchantmentPacketLoreHandler : SurfPaperPacketLoreHandler {
     override val priority = SurfPaperPacketLorePriority.FIRST
 
     private val brokenLore = LoreBuilder().apply {
+        emptyLine()
         line { text("Zerbrochen", NamedTextColor.RED) }
     }.build()
 
