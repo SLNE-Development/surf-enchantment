@@ -92,6 +92,7 @@ enum class CustomItemTypeTags(
         TagEntry.valueEntry(ItemTypeKeys.MACE)
     ),
 
+    // Explicit on purpose (not #enchantable/durability): every new item must first be checked against BrokenItemState.SWAPPED and BrokenItemUseRules.
     UNBREAKABLE_WISH_KEY(
         key("surf", "items_unbreakable_wish"),
         TagEntry.tagEntry(ItemTypeTagKeys.FOOT_ARMOR),
