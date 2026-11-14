@@ -92,6 +92,31 @@ enum class CustomItemTypeTags(
         TagEntry.valueEntry(ItemTypeKeys.MACE)
     ),
 
+    UNBREAKABLE_WISH_KEY(
+        key("surf", "items_unbreakable_wish"),
+        TagEntry.tagEntry(ItemTypeTagKeys.FOOT_ARMOR),
+        TagEntry.tagEntry(ItemTypeTagKeys.LEG_ARMOR),
+        TagEntry.tagEntry(ItemTypeTagKeys.CHEST_ARMOR),
+        TagEntry.tagEntry(ItemTypeTagKeys.HEAD_ARMOR),
+        TagEntry.tagEntry(ItemTypeTagKeys.SWORDS),
+        TagEntry.tagEntry(ItemTypeTagKeys.AXES),
+        TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES),
+        TagEntry.tagEntry(ItemTypeTagKeys.SHOVELS),
+        TagEntry.tagEntry(ItemTypeTagKeys.HOES),
+        TagEntry.tagEntry(ItemTypeTagKeys.SPEARS),
+        TagEntry.valueEntry(ItemTypeKeys.SHIELD),
+        TagEntry.valueEntry(ItemTypeKeys.BOW),
+        TagEntry.valueEntry(ItemTypeKeys.CROSSBOW),
+        TagEntry.valueEntry(ItemTypeKeys.TRIDENT),
+        TagEntry.valueEntry(ItemTypeKeys.FLINT_AND_STEEL),
+        TagEntry.valueEntry(ItemTypeKeys.SHEARS),
+        TagEntry.valueEntry(ItemTypeKeys.BRUSH),
+        TagEntry.valueEntry(ItemTypeKeys.FISHING_ROD),
+        TagEntry.valueEntry(ItemTypeKeys.CARROT_ON_A_STICK),
+        TagEntry.valueEntry(ItemTypeKeys.WARPED_FUNGUS_ON_A_STICK),
+        TagEntry.valueEntry(ItemTypeKeys.MACE)
+    ),
+
     VEIN_MINER_KEY(
         key("surf", "items_vein_miner"),
         TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES)
