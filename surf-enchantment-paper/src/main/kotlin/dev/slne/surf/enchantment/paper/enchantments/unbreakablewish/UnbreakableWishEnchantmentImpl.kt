@@ -9,6 +9,7 @@ import dev.slne.surf.api.core.rarity.Rarity
 import dev.slne.surf.enchantment.api.enchantment.AbstractCustomEnchantment
 import dev.slne.surf.enchantment.api.enchantments.UnbreakableWishEnchantment
 import dev.slne.surf.enchantment.api.utils.CustomItemTypeTags
+import dev.slne.surf.enchantment.paper.enchantments.unbreakablewish.listeners.BrokenItemRepairListener
 import dev.slne.surf.enchantment.paper.enchantments.unbreakablewish.listeners.BrokenItemStateListener
 import dev.slne.surf.enchantment.paper.enchantments.unbreakablewish.listeners.BrokenItemUseListener
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry
@@ -38,5 +39,5 @@ class UnbreakableWishEnchantmentImpl : AbstractCustomEnchantment(
     ),
     maxLevel = 1,
     obtainableFromGameplay = false,
-    listeners = setOf(BrokenItemStateListener, BrokenItemUseListener),
+    listeners = setOf(BrokenItemStateListener, BrokenItemUseListener, BrokenItemRepairListener),
 ), UnbreakableWishEnchantment
