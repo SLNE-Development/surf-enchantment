@@ -65,9 +65,14 @@ object BrokenItemUseListener : Listener {
         }
     }
 
-    /** Dispensers damage items without a player, so no damage or break event fires. */
+    /**
+     * Dispensers damage items without a player, so no damage or break event fires.
+     * Droppers only eject items, which costs no durability, and must keep working.
+     */
     @EventHandler(ignoreCancelled = true)
     fun onDispense(event: BlockDispenseEvent) {
+        if (event.block.type != Material.DISPENSER) return
+
         val item = event.item
         val cost = BrokenItemUseRules.DISPENSER_COST[item.type] ?: return
         if (!BrokenItemState.hasWish(item)) return
