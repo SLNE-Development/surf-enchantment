@@ -10,6 +10,7 @@ import dev.slne.surf.enchantment.api.enchantment.AbstractCustomEnchantment
 import dev.slne.surf.enchantment.api.enchantments.UnbreakableWishEnchantment
 import dev.slne.surf.enchantment.api.utils.CustomItemTypeTags
 import dev.slne.surf.enchantment.paper.enchantments.unbreakablewish.listeners.BrokenItemStateListener
+import dev.slne.surf.enchantment.paper.enchantments.unbreakablewish.listeners.BrokenItemUseListener
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry
 
 @AutoService(UnbreakableWishEnchantment::class)
@@ -37,5 +38,5 @@ class UnbreakableWishEnchantmentImpl : AbstractCustomEnchantment(
     ),
     maxLevel = 1,
     obtainableFromGameplay = false,
-    listeners = setOf(BrokenItemStateListener),
+    listeners = setOf(BrokenItemStateListener, BrokenItemUseListener),
 ), UnbreakableWishEnchantment
