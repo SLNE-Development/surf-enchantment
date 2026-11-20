@@ -2,6 +2,7 @@
 
 package dev.slne.surf.enchantment.paper.listener
 
+import dev.slne.surf.enchantment.paper.enchantments.unbreakablewish.BrokenItemState
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.ItemEnchantments
 import org.bukkit.Material
@@ -19,6 +20,11 @@ object OverMaxAnvilEnchantmentsListener : Listener {
         val secondItem = event.inventory.secondItem ?: return
 
         if (firstItem.type.isAir || secondItem.type.isAir) {
+            return
+        }
+
+        // Broken Unbreakable Wish items may only be repaired; BrokenItemRepairListener decides the result.
+        if (BrokenItemState.isBroken(firstItem) || BrokenItemState.isBroken(secondItem)) {
             return
         }
 

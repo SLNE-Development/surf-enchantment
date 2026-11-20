@@ -5,16 +5,19 @@ package dev.slne.surf.enchantment.paper.lore
 import dev.slne.surf.api.core.messages.adventure.plain
 import dev.slne.surf.api.core.rarity.Rarity
 import dev.slne.surf.api.core.util.mutableObject2IntMapOf
+import dev.slne.surf.api.paper.builder.LoreBuilder
 import dev.slne.surf.api.paper.packet.lore.SurfPaperPacketLoreHandler
 import dev.slne.surf.api.paper.packet.lore.SurfPaperPacketLorePriority
 import dev.slne.surf.enchantment.api.enchantment.EnchantmentManager
 import dev.slne.surf.enchantment.api.utils.Enchantable
+import dev.slne.surf.enchantment.paper.enchantments.unbreakablewish.BrokenItemState
 import dev.slne.surf.enchantment.paper.utils.VanillaEnchantmentMap
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.persistence.PersistentDataContainerView
 import it.unimi.dsi.fastutil.objects.Object2IntRBTreeMap
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
@@ -24,6 +27,11 @@ internal object SurfEnchantmentPacketLoreHandler : SurfPaperPacketLoreHandler {
         .thenByDescending { it.displayName.plain() }
 
     override val priority = SurfPaperPacketLorePriority.FIRST
+
+    private val brokenLore = LoreBuilder().apply {
+        emptyLine()
+        line { text("Zerbrochen", NamedTextColor.RED) }
+    }.build()
 
     override fun handleLore(
         loreToDisplay: MutableList<Component>,
@@ -64,6 +72,10 @@ internal object SurfEnchantmentPacketLoreHandler : SurfPaperPacketLoreHandler {
             val enchantment = next.key
             val level = next.intValue
             loreToDisplay.addAll(enchantment.buildLore(level, shouldDisplayEnchantmentDescription))
+        }
+
+        if (BrokenItemState.isBroken(pdc)) {
+            loreToDisplay.addAll(brokenLore)
         }
     }
 
